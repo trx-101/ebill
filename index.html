@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .thead{
+            background-color: aqua;
+        }
+        .divtbl{
+            width: 800px;
+            height: 800px;
+
+        }
+        .center {
+  margin: auto;
+  width: 50%;
+  border: 3px solid green;
+  padding: 10px;
+}
+    div{
+        margin: auto;
+  width: 55%;
+  height: 100%;
+  border: 1px solid rgb(244, 248, 244);
+  
+    }
+   
+    input{
+        float: right;
+        width: 200px;
+    }
+    </style>
+	<title>Save Web Form Data to Spreadsheets</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script
+		src="https://code.jquery.com/jquery-3.4.1.js"
+		integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+		crossorigin="anonymous"></script>
+	<script>
+
+		function SubForm (){
+			$.ajax({
+				url:"https://api.apispreadsheets.com/data/igJ1eQQiRr2ekVm5/",
+				type:"post",
+				data:$("#myForm").serializeArray(),
+				success: function(){
+					alert("Form Data Submitted :)")
+				},
+				error: function(){
+					alert("There was an error :(")
+				}
+			});
+		}
+        function GetForm(){
+            $("#div-table").show();
+            fetch("https://api.apispreadsheets.com/data/igJ1eQQiRr2ekVm5/?query=select * from igJ1eQQiRr2ekVm5").then(res=>{
+	if (res.status === 200){
+		// SUCCESS
+		res.json().then(data=>{
+			const yourData = data
+            
+            for(var i=0;i<yourData.data.length; i++){
+                $("#tbl-body").append('<tr><td>' + yourData.data[i].full_name + '</td><td>'+yourData.data[i].email +'</td><td>'+yourData.data[i].age+'</td><td>'+yourData.data[i].message+'</td><td><button id="btn-edit">Edit</buttton><button id="btn-delete" name="'+yourData.data[i].full_name+'" onclick="Delete()">Delete</buttton></td><tr>');
+                debugger;
+            }
+           
+            
+		}).catch(err => console.log(err))
+	}
+	else{
+		// ERROR
+	}
+})
+        }
+	
+    function Delete(name){
+        var rowID= $(this).attr('<td>');
+        debugger;
+
+        fetch("https://api.apispreadsheets.com/data/igJ1eQQiRr2ekVm5/?query=delete from igJ1eQQiRr2ekVm5 where full_name= rowID").then(res=>{
+	if (res.status === 200){
+		// SUCCESS 
+        debugger;
+	}
+	else{
+		// ERROR
+	}
+})
+    }
+    </script>
+</head>
+<body>
+    <div id="div-form" class="">
+        <form id="myForm">
+            <div><label>Full Name</label>
+                <input id="name" name="full_name" /></div>
+            <div><label>Email</label>
+                <input id="email" name="email" /></div>
+            <div><label>Age</label>
+                <input id="age" name="age" /></div>
+            <div><label>Message</label>
+                <input id="msg" name="message" /></div>
+            
+                
+        </form>
+        <div id ="div-btn-submit">
+                    
+            <button class="btn btn-primary" onclick='SubForm()'>Submit</button></body>
+            <button class="btn btn-success"onclick='GetForm()'>List</button>
+        </div>
+    </div>	
+    
+   
+    <div id="div-table" class="center">
+        <table id ="tbl" class="table table-dark">
+            <thead class="thead">
+                <th>Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>Message</th>
+                <th>Action</th>
+            </thead>           
+            <tbody id="tbl-body" class="table table-dark"></tbody>
+        </table>
+    </div>
+    <script>
+        $( document ).ready(function() {
+            $("#div-table").hide();
+});
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("body").on("click", "#tbl tr", function () {
+    debugger
+    alert($(this).text());
+});
+
+$("body").on("click", "#tbl td", function () {
+    debugger
+    alert($(this).attr("name"));
+    
+});
+        });
+        </script>
+</body>
+</html>
